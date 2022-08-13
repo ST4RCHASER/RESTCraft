@@ -5,11 +5,8 @@ public class Request {
     private String secret;
     private String keyword;
     private String target_player;
-    Request(String command, String secret, String keyword, String targetPlayer) {
-        this.command = command;
-        this.secret = secret;
-        this.keyword = keyword;
-        this.target_player = targetPlayer;
+    public Request() {
+
     }
 
     public String getCommand() {
@@ -24,5 +21,21 @@ public class Request {
 
     public String getKeyword() {
         return keyword;
+    }
+
+    public void setCommand(String command) {
+        this.command = command;
+    }
+
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
+    }
+
+    public void setSecret(String secret) {
+        this.secret = secret;
+    }
+
+    public void setTargetPlayer(String targetPlayer) {
+        this.target_player = targetPlayer;
     }
 }

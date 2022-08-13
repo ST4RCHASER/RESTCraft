@@ -60,7 +60,6 @@ public class httpHandleResponse {
             byte[] correctDigest = correct.digest(correctByte);
             String correctString = new String(correctDigest, StandardCharsets.UTF_8);
             String currectHexString = toHexString(correctDigest);
-            instance.getLogger().info("Secret: " + secret + " Correct: " + currectHexString);
             if (secret.equals(currectHexString)) return "ok";
         } catch (Exception e) {
             instance.getLogger().severe(e.toString());
@@ -80,6 +79,15 @@ public class httpHandleResponse {
 
         return hexString.toString();
     }
+    public Request getRequestData(){
+        Request data = gson.fromJson(request.body(), Request.class);
+        if(data == null) data = new Request();
+        if(data.getSecret() == null) data.setSecret(request.queryParams("secret"));
+        if(data.getTargetPlayer() == null) data.setTargetPlayer(request.queryParams("targetPlayer"));
+        if(data.getKeyword() == null) data.setKeyword(request.queryParams("keyword"));
+        if(data.getCommand() == null) data.setCommand(request.queryParams("command"));
+        return data;
+    }
     public Object execute(Plugin plugin, configReader config) {
         final String isAuth = this.isAuthenticated(config, plugin.getServer(), this.request);
         if (isAuth.equals("ok")) {
@@ -92,8 +100,7 @@ public class httpHandleResponse {
         }
         Server instance = plugin.getServer();
         instance.getLogger().info("Request " + request.pathInfo() + " from " + request.ip());
-        instance.getLogger().info("Body: " + request.body());
-        Request requestData = gson.fromJson(request.body(), Request.class);
+        Request requestData = getRequestData();
         String respType = config.getResType().toLowerCase();
         if (request.requestMethod().equals("POST") || request.requestMethod().equals("GET")) {
             if (request.pathInfo().equalsIgnoreCase("/")) {
