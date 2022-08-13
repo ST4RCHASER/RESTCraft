@@ -1,0 +1,7 @@
+name: RESTCraft
+version: '${project.version}'
+main: me.starchaser.restcraft.main
+api-version: 1.19
+prefix: RESTCraft
+authors: [ _StarChaser ]
+description: An simple restful plugin

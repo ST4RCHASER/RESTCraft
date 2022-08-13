@@ -1,0 +1,20 @@
+server:
+  ip_bind: "localhost"
+  port: 7132
+  password:
+    #NONE, SHA-256, SHA-512, SHA-1, MD5
+    hash: "NONE"
+    secret: "PLEASE_CHANGE_THIS_SECRET"
+  #JSON, BOOLEAN, PLAINTEXT
+  response_type: "JSON"
+  ip_whitelist:
+    enabled: false
+    list:
+      - "127.0.0.1"
+disable_commands:
+  - "op"
+switch:
+  as_player: true
+  as_op: true
+  as_console: true
+  is_online: true
