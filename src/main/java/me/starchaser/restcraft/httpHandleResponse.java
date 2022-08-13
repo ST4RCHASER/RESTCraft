@@ -101,43 +101,44 @@ public class httpHandleResponse {
         Server instance = plugin.getServer();
         instance.getLogger().info("Request " + request.pathInfo() + " from " + request.ip());
         Request requestData = getRequestData();
+        String keyword = requestData.getKeyword();
         String respType = config.getResType().toLowerCase();
         if (request.requestMethod().equals("POST") || request.requestMethod().equals("GET")) {
             if (request.pathInfo().equalsIgnoreCase("/")) {
-                return generateResponse(200, "Welcome to RESTCraft please read document for how to use", null, respType);
+                return generateResponse(200, "Welcome to RESTCraft please read document for how to use", keyword, respType);
             }
             if (request.pathInfo().equalsIgnoreCase("/ping")) {
-                return generateResponse(200, "pong", null, respType);
+                return generateResponse(200, "pong", keyword, respType);
             }
             if (request.pathInfo().equalsIgnoreCase("/version")) {
-                return generateResponse(200, plugin.getDescription().getVersion(), null, respType);
+                return generateResponse(200, plugin.getDescription().getVersion(), keyword, respType);
             }
             if (request.pathInfo().equalsIgnoreCase("/isOnline")) {
                 if (!config.isOnlineCheckEnabled())
-                    return generateResponse(403, "online check is disabled", null, respType);
+                    return generateResponse(403, "online check is disabled", keyword, respType);
                 String target = requestData.getTargetPlayer();
                 Player player = instance.getPlayerExact(target);
                 if (player == null)
-                    return generateResponse(404, "Player name " + target + " is not found", null, respType);
-                return generateResponse(200, "Player name " + target + " found", null, respType);
+                    return generateResponse(404, "Player name " + target + " is not found", keyword, respType);
+                return generateResponse(200, "Player name " + target + " found", keyword, respType);
             }
             String target = requestData.getTargetPlayer();
             String command = requestData.getCommand();
             if (request.pathInfo().equalsIgnoreCase("/runAsPlayer")) {
                 if (!config.isAsPlayerEnabled())
-                    return generateResponse(403, "run as player is disabled", null, respType);
-                if (target == null) return generateResponse(400, "No target provided", null, respType);
-                if (command == null) return generateResponse(400, "No command provided", null, respType);
+                    return generateResponse(403, "run as player is disabled", keyword, respType);
+                if (target == null) return generateResponse(400, "No target provided", keyword, respType);
+                if (command == null) return generateResponse(400, "No command provided", keyword, respType);
                 Player player = instance.getPlayerExact(target);
                 if (player == null)
-                    return generateResponse(404, "Player name " + target + " is not found", null, respType);
+                    return generateResponse(404, "Player name " + target + " is not found", keyword, respType);
                 if (command.split(" ").length > 0 && config.getDisableCommands().contains(command.split(" ")[0]))
-                    return generateResponse(403, "Command " + command.split(" ")[0] + " is disabled", null, respType);
+                    return generateResponse(403, "Command " + command.split(" ")[0] + " is disabled", keyword, respType);
                 try {
                     final MessageInterceptingCommandRunner cmdRunner = new MessageInterceptingCommandRunner(player);
                     return instance.getScheduler().callSyncMethod(plugin, () -> {
                         instance.dispatchCommand(cmdRunner, command);
-                        return generateResponse(200, cmdRunner.getMessageLogStripColor(), null, respType);
+                        return generateResponse(200, cmdRunner.getMessageLogStripColor(), keyword, respType);
                     }).get();
                 } catch (Exception ex) {
                     try {
@@ -147,7 +148,7 @@ public class httpHandleResponse {
                                 player.performCommand(command);
                             }
                         }.runTask(plugin);
-                        return generateResponse(200, "Command run successfully, but can't get response", null, respType);
+                        return generateResponse(200, "Command run successfully, but can't get response", keyword, respType);
                     } catch (Exception ex2) {
                         try {
                             new BukkitRunnable() {
@@ -156,25 +157,25 @@ public class httpHandleResponse {
                                     instance.dispatchCommand(player, command);
                                 }
                             }.runTask(plugin);
-                            return generateResponse(200, "Command run successfully, but can't get response", null, respType);
+                            return generateResponse(200, "Command run successfully, but can't get response", keyword, respType);
                         } catch (Exception ex3) {
                             ex.printStackTrace();
                             ex2.printStackTrace();
                             ex3.printStackTrace();
-                            return generateResponse(500, "Error while running as player command: " + ex.toString(), null, respType);
+                            return generateResponse(500, "Error while running as player command: " + ex.toString(), keyword, respType);
                         }
                     }
                 }
             }
             if (request.pathInfo().equalsIgnoreCase("/runAsOp")) {
-                if (!config.isAsOpEnabled()) return generateResponse(403, "run as op is disabled", null, respType);
-                if (target == null) return generateResponse(400, "No target provided", null, respType);
-                if (command == null) return generateResponse(400, "No command provided", null, respType);
+                if (!config.isAsOpEnabled()) return generateResponse(403, "run as op is disabled", keyword, respType);
+                if (target == null) return generateResponse(400, "No target provided", keyword, respType);
+                if (command == null) return generateResponse(400, "No command provided", keyword, respType);
                 Player player = instance.getPlayerExact(target);
                 if (player == null)
-                    return generateResponse(404, "Player name " + target + " is not found", null, respType);
+                    return generateResponse(404, "Player name " + target + " is not found", keyword, respType);
                 if (command.split(" ").length > 0 && config.getDisableCommands().contains(command.split(" ")[0]))
-                    return generateResponse(403, "Command " + command.split(" ")[0] + " is disabled", null, respType);
+                    return generateResponse(403, "Command " + command.split(" ")[0] + " is disabled", keyword, respType);
                 boolean isAlreadyOp = player.isOp();
                 player.setOp(true);
                 try {
@@ -182,7 +183,7 @@ public class httpHandleResponse {
                     return instance.getScheduler().callSyncMethod(plugin, () -> {
                         instance.dispatchCommand(cmdRunner, command);
                         player.setOp(isAlreadyOp);
-                        return generateResponse(200, cmdRunner.getMessageLogStripColor(), null, respType);
+                        return generateResponse(200, cmdRunner.getMessageLogStripColor(), keyword, respType);
                     }).get();
                 } catch (Exception ex) {
                     try {
@@ -193,7 +194,7 @@ public class httpHandleResponse {
                                 player.setOp(isAlreadyOp);
                             }
                         }.runTask(plugin);
-                        return generateResponse(200, "Command run successfully, but can't get response", null, respType);
+                        return generateResponse(200, "Command run successfully, but can't get response", keyword, respType);
                     } catch (Exception ex2) {
                         try {
                             new BukkitRunnable() {
@@ -203,32 +204,32 @@ public class httpHandleResponse {
                                     player.setOp(isAlreadyOp);
                                 }
                             }.runTask(plugin);
-                            return generateResponse(200, "Command run successfully, but can't get response", null, respType);
+                            return generateResponse(200, "Command run successfully, but can't get response", keyword, respType);
                         } catch (Exception ex3) {
                             player.setOp(isAlreadyOp);
                             ex.printStackTrace();
                             ex2.printStackTrace();
                             ex3.printStackTrace();
-                            return generateResponse(500, "Error while running as op command: " + ex.toString(), null, respType);
+                            return generateResponse(500, "Error while running as op command: " + ex.toString(), keyword, respType);
                         }
                     }
                 }
             }
             if (request.pathInfo().equalsIgnoreCase("/runAsConsole")) {
                 if (!config.isAsConsoleEnabled())
-                    return generateResponse(403, "run as console is disabled", null, respType);
-                if (command == null) return generateResponse(400, "No command provided", null, respType);
+                    return generateResponse(403, "run as console is disabled", keyword, respType);
+                if (command == null) return generateResponse(400, "No command provided", keyword, respType);
                 if (command.split(" ").length > 0 && config.getDisableCommands().contains(command.split(" ")[0]))
-                    return generateResponse(403, "Command " + command.split(" ")[0] + " is disabled", null, respType);
+                    return generateResponse(403, "Command " + command.split(" ")[0] + " is disabled", keyword, respType);
                 try {
                     final MessageInterceptingConsoleCommandRunner cmdRunner = new MessageInterceptingConsoleCommandRunner(instance.getConsoleSender());
                     return instance.getScheduler().callSyncMethod(plugin, () -> {
                         instance.dispatchCommand(cmdRunner, command);
-                        return generateResponse(200, cmdRunner.getMessageLogStripColor(), null, respType);
+                        return generateResponse(200, cmdRunner.getMessageLogStripColor(), keyword, respType);
                     }).get();
                 } catch (Exception e) {
                     e.printStackTrace();
-                    return generateResponse(500, "Error while running as console command: " + e.toString(), null, respType);
+                    return generateResponse(500, "Error while running as console command: " + e.toString(), keyword, respType);
                 }
             }
         }

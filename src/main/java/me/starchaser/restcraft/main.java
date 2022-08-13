@@ -1,5 +1,7 @@
 package me.starchaser.restcraft;
 
+import org.bstats.bukkit.Metrics;
+import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.plugin.Plugin;
@@ -14,6 +16,8 @@ public final class main extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        Metrics metrics = new Metrics(this, 16121);
+        metrics.addCustomChart(new SimplePie("rc_players", () -> instance.getOnlinePlayers().size() + ""));
         this.instance = this.getServer();
         this.plugin = this;
         this.config = new configReader(this);
